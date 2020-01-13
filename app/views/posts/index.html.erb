@@ -1,0 +1,27 @@
+<p id="notice"><%= notice %></p>
+
+<h1>掲示板</h1>
+<%= form_with(url:posts_path, method: :get, local: true) do |f| %>
+  <%= f.label :search, 'Sarch' %>
+  <%= f.text_field :search %>
+  <%= f.submit 'Search' %>
+<% end %>
+<table>
+  <thead>
+    <tr>
+      <th>タイトル(カテゴリ)</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @posts.each do |post| %>
+      <tr>
+        <td><%= link_to "#{post.title}(#{category_names(post)})", post %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+

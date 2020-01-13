@@ -1,0 +1,73 @@
+version: '3'
+services:
+  es01:
+    #image: "elasticsearch:7.5.1"
+    build:
+      context: .
+      dockerfile: es.Dockerfile
+    container_name: es01
+    environment:
+      - node.name=es01
+      - discovery.seed_hosts=es02
+      - cluster.initial_master_nodes=es01,es02
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - "9200:9200"
+    volumes:
+      - es_data01:/usr/share/elasticsearch/data
+  es02:
+    #image: "elasticsearch:7.5.1"
+    build:
+      context: .
+      dockerfile: es.Dockerfile
+    container_name: es02
+    environment:
+      - node.name=es02
+      - discovery.seed_hosts=es02
+      - cluster.initial_master_nodes=es01,es02
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - es_data02:/usr/share/elasticsearch/data
+  mysql:
+    image: "mysql:5.7"
+    ports:
+      - "53306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: "sn_5ch_development"
+      MYSQL_ROOT_PASSWORD: "rootroot"
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
+  rails:
+    tty: true
+    stdin_open: true
+    build: .
+    depends_on:
+      - mysql
+      - es01
+      - es02
+    ports:
+      - "8000:8000"
+    command: /bin/sh -c "rm -f /sn_5ch/tmp/pids/server.pid && bin/rails s -p 8000 -b '0.0.0.0'"
+    volumes:
+      - .:/sn_5ch
+volumes:
+  mysql_data:
+    driver: local
+  es_data01:
+    driver: local
+  es_data02:
+    driver: local
+

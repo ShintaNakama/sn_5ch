@@ -1,0 +1,30 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>カテゴリ:</strong>
+  <% @post.categories.each do |category| %>
+    <%= category.category_name %>
+  <% end %>
+</p>
+
+<p>
+  <strong>投稿者:</strong>
+  <%= @post.user.name %>
+</p>
+
+<p>
+  <strong>タイトル:</strong>
+  <%= @post.title %>
+</p>
+
+<p>
+  <%= @post.body %>
+</p>
+
+<% @post.comments.each.with_index(1) do |comment, i| %>
+  <p>レス:<%= i %> 名前:<%= comment.user.name %></p>
+  <p><%= comment.comment %></p>
+<% end %>
+
+<%= link_to 'コメントする', new_post_comment_path(@post.id)%>
+<%= link_to '掲示板TOP', posts_path %>
