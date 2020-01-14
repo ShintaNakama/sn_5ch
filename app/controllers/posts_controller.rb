@@ -30,10 +30,9 @@ class PostsController < ApplicationController
   # POST /posts
   # POST /posts.json
   def create
-    category_names = Category.split_category_params(category_params[:category_name])
     @post          = Post.new(post_params)
     @post.user_id  = current_user.id
-    category_names.each do |category_name|
+    category_params[:category_name].each do |category_name|
       @post.categories << Category.find_or_initialize_by(category_name:category_name)
     end
     respond_to do |format|
@@ -83,7 +82,7 @@ class PostsController < ApplicationController
     end
 
     def category_params
-      params.require(:post).permit(:category_name)
+      params.require(:post).permit(category_name: [])
     end
 
 end
