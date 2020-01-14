@@ -30,3 +30,36 @@ $ docker-compose up
 $ docker-compose run rails bin/rails elasticsearch:create_post_index
 $ docker-compose run rails bin/rails elasticsearch:import_post
 ```
+
+### 内容
+- DB.tables
+  - users(会員)
+    - name
+    - email
+    - password
+  - posts(投稿)
+    - title
+    - body
+    - user_id(FK)
+  - comments(レス)
+    - comment
+    - user_id(FK)
+    - post_id(FK)
+  - categories(カテゴリ)
+    - category_name
+  - posts_categories
+    - post_id(FK)
+    - cagegory_id(FK)
+
+- userのログイン機能は、deviseを使いました。サインアップ時に名前の登録も行います。
+- 投稿はログインしていないと出来ないようにしました。userとpostは1対多の関連になっています。
+- 投稿時にカテゴリも登録します。カテゴリは複数登録が可能です。新しいカテゴリが入力された場合は、categories.tableにinsertし、すでに登録されている場合はcategories.tableへのinsertは行いません。postとcategoryは多対多の関連なのでposts_categories.tableで管理しています。
+- 投稿に対してコメントが出来ます。
+- 全文検索でelasticsearchを使い、タイトル、投稿内容、カテゴリ、コメントで検索出来ます。
+
+#### 出来なかったこと
+- 見た目を全くキレイに出来ておりません。
+- testを書いておりません。
+- docker imageはリファクタリング出来ておりません。(このままだとimageの容量が大きい)
+- elasticsearchのindex更新が自動ではない
+- 構成図なども作成したかったですが間に合いませんでした。
