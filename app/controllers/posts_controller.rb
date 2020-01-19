@@ -1,5 +1,4 @@
 class PostsController < ApplicationController
-  #before_action :set_post, only: [:show, :edit, :update, :destroy]
   before_action :set_post, only: [:show]
   before_action :authenticate_user!, only: [:new, :create]
 
@@ -20,7 +19,7 @@ class PostsController < ApplicationController
 
   # GET /posts/new
   def new
-    @post = Post.new(user_id:current_user.id)
+    @post = current_user.posts.new
   end
 
   # GET /posts/1/edit
@@ -30,11 +29,8 @@ class PostsController < ApplicationController
   # POST /posts
   # POST /posts.json
   def create
-    @post          = Post.new(post_params)
-    @post.user_id  = current_user.id
-    category_params[:category_name].each do |category_name|
-      @post.categories << Category.find_or_initialize_by(category_name:category_name)
-    end
+    @post = current_user.posts.new(post_params)
+    @post.set_categories(category_params[:category_name])
     respond_to do |format|
       if @post.save
         format.html { redirect_to @post, notice: 'Post was successfully updated.' }

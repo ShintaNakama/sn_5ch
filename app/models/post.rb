@@ -9,4 +9,11 @@ class Post < ApplicationRecord
   validates :title, presence: true
   validates :body, presence: true
 
+  def set_categories(category_names)
+    category_names.reject!(&:blank?)
+    return if category_names.size.zero?
+    category_names.each do |category_name|
+      self.categories << Category.find_or_initialize_by(category_name:category_name)
+    end
+  end
 end
