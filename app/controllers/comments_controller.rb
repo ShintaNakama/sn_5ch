@@ -15,8 +15,10 @@ class CommentsController < ApplicationController
 
   # GET /comments/new
   def new
-    #@comment = Comment.new(post_id: params[:post_id])
-    @post = Post.find(params[:post_id])
+    #@comment = Comment.new(post_params)
+    #@comment = current_user.posts.new(id: post_params[:post_id]).comments.build
+    #@post = Post.find(params[:post_id])
+    @comment_registration_form = CommentRegistrationForm.new(post_params)
   end
 
   # GET /comments/1/edit
@@ -26,19 +28,18 @@ class CommentsController < ApplicationController
   # POST /comments
   # POST /comments.json
   def create
-    @post = Post.find(params[:post_id])
-    @comment = @post.comments.new(comment_params)
-    @comment.user_id = current_user.id
+    @comment_registration_form = CommentRegistrationForm.new
+    @comment_registration_form.comment = comment_params[:comment]
+    @comment_registration_form.post_id = post_params[:post_id]
+    @comment_registration_form.user_id = current_user.id
 
+    @comment_registration_form.save!
     respond_to do |format|
-      if @comment.save
-        format.html { redirect_to @post, notice: 'Comment was successfully created.' }
+        format.html { redirect_to post_path(@comment_registration_form.post_id), notice: 'Comment was successfully created.' }
         format.json { render :show, status: :created, location: @comment }
-      else
-        format.html { render :new }
-        format.json { render json: @comment.errors, status: :unprocessable_entity }
-      end
     end
+  rescue
+    format.html { render :new }
   end
 
   # PATCH/PUT /comments/1
@@ -71,8 +72,12 @@ class CommentsController < ApplicationController
       @comment = Comment.find(params[:id])
     end
 
+    def post_params
+      params.permit(:post_id)
+    end
+
     # Never trust parameters from the scary internet, only allow the white list through.
     def comment_params
-      params.require(:comment).permit(:comment)
+      params.require(:comment_registration_form).permit(:comment)
     end
 end
