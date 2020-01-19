@@ -15,9 +15,6 @@ class CommentsController < ApplicationController
 
   # GET /comments/new
   def new
-    #@comment = Comment.new(post_params)
-    #@comment = current_user.posts.new(id: post_params[:post_id]).comments.build
-    #@post = Post.find(params[:post_id])
     @comment_registration_form = CommentRegistrationForm.new(post_params)
   end
 
