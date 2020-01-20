@@ -15,7 +15,7 @@ class CommentsController < ApplicationController
 
   # GET /comments/new
   def new
-    @comment_registration_form = CommentRegistrationForm.new(post_params)
+    @comment_registration_form = CommentRegistrationForm.new
   end
 
   # GET /comments/1/edit
@@ -26,17 +26,17 @@ class CommentsController < ApplicationController
   # POST /comments.json
   def create
     @comment_registration_form = CommentRegistrationForm.new
-    @comment_registration_form.comment = comment_params[:comment]
-    @comment_registration_form.post_id = post_params[:post_id]
-    @comment_registration_form.user_id = current_user.id
+    @comment_registration_form.set_attributes(post_params, current_user, comment_params)
 
-    @comment_registration_form.save!
     respond_to do |format|
+      if @comment_registration_form.save
         format.html { redirect_to post_path(@comment_registration_form.post_id), notice: 'Comment was successfully created.' }
         format.json { render :show, status: :created, location: @comment }
+      else
+        format.html { render :new }
+        format.json { render json: @comment.errors, status: :unprocessable_entity }
+      end
     end
-  rescue
-    format.html { render :new }
   end
 
   # PATCH/PUT /comments/1

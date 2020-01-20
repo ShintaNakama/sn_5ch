@@ -6,9 +6,20 @@ class CommentRegistrationForm
   attribute :post_id, :integer, default: nil
   attribute :comment, :string, default: nil
 
-  def save!
-    raise ActiveRecord::RecordInvalid if invalid?
+  def set_attributes(post, user, comment={})
+    self.post_id = post[:post_id]
+    self.user_id = user.id
+    self.comment = comment[:comment]
+    return self
+  end
+
+  def save
     comment = Comment.new(comment: self.comment, user_id: user_id, post_id: post_id)
-    comment.save!
+    return false if comment.invalid?
+    if comment.save
+      true
+    else
+      false
+    end
   end
 end
