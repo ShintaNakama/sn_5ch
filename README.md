@@ -57,9 +57,10 @@ $ docker-compose run rails bin/rails elasticsearch:import_post
 - 投稿に対してコメントが出来ます。
 - 全文検索でelasticsearchを使い、タイトル、投稿内容、カテゴリ、コメントで検索出来ます。
 
-#### 出来なかったこと
-- 見た目を全くキレイに出来ておりません。
-- testを書いておりません。
-- docker imageはリファクタリング出来ておりません。(このままだとimageの容量が大きい)
+#### TODO
+- フロントエンド
+- test
+- Dockerfileのリファクタリング
 - elasticsearchのindex更新が自動ではない
-- 構成図なども作成したかったですが間に合いませんでした。
+- 構成図などの作成
+- etc
